@@ -44,15 +44,13 @@ def ejecutar_sql(sql_text):
 # obtener programadores (hecho)
 # Asignar gestor a proyecto (hecho)
 # Asignar cliente a proyecto (hecho)
-
-# asignar programador a proyecto
-# asignar programador a tareas
+# Crear tareas a proyectos (debe estar asignado)
+# asignar programador a proyecto (hecho)
+# asignar programador a tareas (hecho)
 
 # obtener proyectos activos o todos (medio hecho)
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
 
-# obtener tareas de un proyecto (sin asignar o aignada) - 1
-# Crear tareas a proyectos (debe estar asignado)
 
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
 @app.route('/tareas/proyectos',methods=['GET'])
@@ -124,7 +122,7 @@ def gestor_ejemplo_post():
             {cliente},
         );
     """
-    return  (sql)
+    return (sql)
 
 @app.route('/login_user', methods=['POST'])
 def login_user():
@@ -158,6 +156,8 @@ def gestor_tarea():
     body_request = request.json
     nombre = body_request["nombre"]
     descripcion = body_request["descripcion"]
+    fecha_creacion = body_request["fecha_creacion"]
+    fecha_finalizacion = body_request["fecha_finalizacion"]
     estimacion = body_request["estimacion"]
     programador = body_request["programador"]
     proyecto = body_request["proyecto"]
@@ -167,13 +167,26 @@ def gestor_tarea():
             '{nombre}',
             '{descripcion}',
             '{estimacion}',
-            NOW(),
-            null,
-            '{programador}',
-            {proyecto},
+            '{fecha_creacion}',
+            '{fecha_finalizacion}',
+            {programador},
+            {proyecto}
         );
     """
     return ejecutar_sql(sql)
+
+"""
+    ruta: http://127.0.0.1:5000/crear_tareas
+    {
+    "nombre": "Nombre de la tarea",
+    "descripcion": "Descripcion detallada de la tarea",
+    "estimacion": 5, 
+    "fecha_creacion":"2024-01-01 10:00:00+00", 
+    "fecha_finalizacion": "2024-01-01 10:00:00+00", 
+    "programador": 1,
+    "proyecto": 9
+}
+"""
 
 @app.route('/proyecto/asignar_proyecto', methods=['POST'])
 def asignar_proyecto():
@@ -183,8 +196,8 @@ def asignar_proyecto():
     sql = f"""
             INSERT INTO public."GestoresProyecto" (gestor, proyecto, fecha_asignacion)
             VALUES (
-                {gestor},
-                {proyecto},
+                '{gestor}',
+                '{proyecto}',
                 NOW()
             )
         """
@@ -203,42 +216,40 @@ def asignar_cliente_proyecto():
         """
     return jsonify(ejecutar_sql(sql))
 
-@app.route('/proyecto/asignar_cliente_proyecto', methods=['POST'])
-def asignar_cliente_proyecto():
-    body_request = request.json
-    id_cliente = body_request["id_cliente"]
-    id_proyecto = body_request["id_proyecto"]
-    sql = f"""
-            UPDATE public."Proyecto"
-            SET cliente = {id_cliente}
-            WHERE id = {id_proyecto}
-        """
-    return jsonify(ejecutar_sql(sql))
-
 @app.route('/proyecto/asignar_programador_proyecto', methods=['POST'])
-def asignar_cliente_proyecto():
+def asignar_programador_proyecto():
     body_request = request.json
-    id_cliente = body_request["id_cliente"]
-    id_proyecto = body_request["id_proyecto"]
+    programador = body_request["programador"]
+    proyecto = body_request["proyecto"]
     sql = f"""
-            UPDATE public."Proyecto"
-            SET cliente = {id_cliente}
-            WHERE id = {id_proyecto}
+            INSERT INTO public."ProgramadoresProyecto" (programador, proyecto, fecha_asignacion)
+            VALUES (
+                {programador},
+                {proyecto},
+                NOW()
+            );
         """
     return jsonify(ejecutar_sql(sql))
 
 @app.route('/proyecto/asignar_programador_tareas', methods=['POST'])
-def asignar_cliente_proyecto():
+def asignar_programador_tareas():
     body_request = request.json
-    id_cliente = body_request["id_cliente"]
-    id_proyecto = body_request["id_proyecto"]
+    id_tarea = body_request["id_tarea"]
+    programador = body_request["programador"]
     sql = f"""
-            UPDATE public."Proyecto"
-            SET cliente = {id_cliente}
-            WHERE id = {id_proyecto}
+            UPDATE public."Tarea"
+            SET programador = {programador}
+            WHERE id = {id_tarea}
         """
     return jsonify(ejecutar_sql(sql))
 
+"""
+    ruta: http://127.0.0.1:5000/asignar_programador_tareas
+{
+    "id": 1,
+    "programador": 9
+}
+"""
 
 
 if __name__=='__main__':
