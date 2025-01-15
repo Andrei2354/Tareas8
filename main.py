@@ -176,5 +176,33 @@ def gestor_tarea():
     """
     return ejecutar_sql(sql)
 
+@app.route('/proyecto/asignar_proyecto', methods=['POST'])
+def asignar_proyecto():
+    body_request = request.json
+    gestor = body_request["gestor"]
+    proyecto = body_request["proyecto"]
+    sql = f"""
+            INSERT INTO public."GestoresProyecto" (gestor, proyecto, fecha_asignacion)
+            VALUES (
+                {gestor},
+                {proyecto},
+                NOW()
+            )
+        """
+    return jsonify(ejecutar_sql(sql))
+
+
+@app.route('/proyecto/asignar_cliente_proyecto', methods=['POST'])
+def asignar_cliente_proyecto():
+    body_request = request.json
+    id_cliente = body_request["id_cliente"]
+    id_proyecto = body_request["id_proyecto"]
+    sql = f"""
+            UPDATE public."Proyecto"
+            SET cliente = {id_cliente}
+            WHERE id = {id_proyecto}
+        """
+    return jsonify(ejecutar_sql(sql))
+
 if __name__=='__main__':
     app.run(debug=True)
