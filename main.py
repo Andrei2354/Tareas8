@@ -40,20 +40,19 @@ def ejecutar_sql(sql_text):
     return jsonify(empleados)
 
 # Todos
-
+# Login (hecho)
 # obtener programadores (hecho)
-# obtener proyectos activos o todos (medio hecho)
-# obtener tareas de un proyecto (sin asignar o aignada) - 1
+# Asignar gestor a proyecto (hecho)
+# Asignar cliente a proyecto (hecho)
 
-# Asignar gestor a proyecto
-# Asignar cliente a proyecto
 # asignar programador a proyecto
 # asignar programador a tareas
 
+# obtener proyectos activos o todos (medio hecho)
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
 
+# obtener tareas de un proyecto (sin asignar o aignada) - 1
 # Crear tareas a proyectos (debe estar asignado)
-# Login
 
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
 @app.route('/tareas/proyectos',methods=['GET'])
@@ -203,6 +202,44 @@ def asignar_cliente_proyecto():
             WHERE id = {id_proyecto}
         """
     return jsonify(ejecutar_sql(sql))
+
+@app.route('/proyecto/asignar_cliente_proyecto', methods=['POST'])
+def asignar_cliente_proyecto():
+    body_request = request.json
+    id_cliente = body_request["id_cliente"]
+    id_proyecto = body_request["id_proyecto"]
+    sql = f"""
+            UPDATE public."Proyecto"
+            SET cliente = {id_cliente}
+            WHERE id = {id_proyecto}
+        """
+    return jsonify(ejecutar_sql(sql))
+
+@app.route('/proyecto/asignar_programador_proyecto', methods=['POST'])
+def asignar_cliente_proyecto():
+    body_request = request.json
+    id_cliente = body_request["id_cliente"]
+    id_proyecto = body_request["id_proyecto"]
+    sql = f"""
+            UPDATE public."Proyecto"
+            SET cliente = {id_cliente}
+            WHERE id = {id_proyecto}
+        """
+    return jsonify(ejecutar_sql(sql))
+
+@app.route('/proyecto/asignar_programador_tareas', methods=['POST'])
+def asignar_cliente_proyecto():
+    body_request = request.json
+    id_cliente = body_request["id_cliente"]
+    id_proyecto = body_request["id_proyecto"]
+    sql = f"""
+            UPDATE public."Proyecto"
+            SET cliente = {id_cliente}
+            WHERE id = {id_proyecto}
+        """
+    return jsonify(ejecutar_sql(sql))
+
+
 
 if __name__=='__main__':
     app.run(debug=True)
