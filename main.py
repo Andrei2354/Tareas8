@@ -49,7 +49,7 @@ def ejecutar_sql(sql_text):
 # asignar programador a tareas (hecho)
 
 # obtener proyectos activos o todos (medio hecho)
-# obtener tareas de un proyecto (sin asignar o aignada) - 1
+# obtener tareas de un proyecto (medio hecho)
 
 
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
@@ -127,7 +127,7 @@ def gestor_ejemplo_post():
 @app.route('/login_user', methods=['POST'])
 def login_user():
     body_request = request.json
-    user = body_request["usuario"]
+    user = body_request["user"]
     passwd = body_request["passwd"]
 
     is_logged = ejecutar_sql(
