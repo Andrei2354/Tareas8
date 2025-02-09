@@ -11,6 +11,8 @@ def ejecutar_sql(sql_text):
     user = "postgres"
     password = "postgres"
 
+    #Andrei2354
+
     connection = psycopg2.connect(
         host=host,
         port=port,
@@ -51,12 +53,18 @@ def ejecutar_sql(sql_text):
 
 
 # obtener tareas de un proyecto (sin asignar o aignada) - 1
-@app.route('/tareas/proyectos',methods=['GET'])
+@app.route('/tareas/proyectos', methods=['GET'])
 def proyectos_tareas():
     body_request = request.json
-    proyecto_nombre = body_request["nombre"]
-    resultado = ejecutar_sql(
-    f'''SELECT * FROM public."Tarea" t JOIN public."Proyecto" p ON t."proyecto" = p."id" WHERE p."nombre" = "{proyecto_nombre}"''')
+    proyecto_id = int(body_request["id"])  # Asegurar que sea un número
+
+    consulta = f'''SELECT * 
+                   FROM public."Tarea" t 
+                   INNER JOIN public."Proyecto" p ON t."proyecto" = p.id 
+                   WHERE p.id = {proyecto_id}'''
+
+    resultado = ejecutar_sql(consulta)
+
     return resultado
 
 @app.route('/proyectos')
@@ -96,10 +104,18 @@ def proyectosActivos():
     '''SELECT * FROM public."Proyecto" WHERE "fecha_inicio" BETWEEN '2024-01-01 10:00:00' AND '2024-01-01 10:00:00' ''')
     return resultado
 
-@app.route('/proyecto/proyectos_gestor',methods=['GET'])
+
+@app.route('/proyecto/proyectos_gestor', methods=['GET'])
 def proyectosGestor():
-    empleado_id = request.args.get('id')
-    resultado = ejecutar_sql(f'''Select * from public."Proyecto" p inner join "GestoresProyecto" g on g.proyecto = p.id where g.gestor = {empleado_id} ''')
+    empleado_id = int(request.args.get('id'))  # Asegurar que sea un número
+
+    consulta = f'''SELECT * 
+                   FROM public."Proyecto" p 
+                   INNER JOIN public."GestoresProyecto" g ON g.proyecto = p.id 
+                   WHERE g.gestor = {empleado_id}'''
+
+    resultado = ejecutar_sql(consulta)
+
     return resultado
 
 @app.route('/ejemplo_post', methods=['POST'])
